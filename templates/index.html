@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Site icon -->
+  <link rel="icon" href="{{ url_for('static', filename='icon.svg') }}" type="image/svg+xml">
+  <!-- Include a CSS file using the Flask 'url_for' function -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- Include Bootstrap CSS from a CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+  <!-- TITLE -->
+  <title>Password App Manager</title>
+</head>
+
+<body>
+  <!-- App name -->
+  <header class="container">
+    <h2>Password Manager App</h2>
+  </header>
+
+  <!-- PASSWORD INPUT MANAGER -->
+  <section class="container">
+    <form method="POST" action="/add" class="password-form">
+      <input type="text" name="title" placeholder="Title" class="form-control">
+      <input type="email" name="email" placeholder="E-mail" class="form-control">
+      <input type="text" name="site_url" placeholder="URL" class="form-control">
+      <input type="password" name="site_password" placeholder="Password" class="form-control">
+      <button class="btn btn-outline-primary">Add</button>
+    </form>
+  </section>
+  <!--  -->
+
+  <!-- PASSWORD LIST -->
+  <section class="container password-list">
+    {% for item in passwordlist %}
+    <div class="password-item">
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.email }}</p>
+      <p>{{ item.site_url }}</p>
+      <input type="password" value="{{ item.site_password }}" id="{{ item.id }}" class="hidden-password" />
+      <div class="password-actions">
+        <a href="/update/{{ item.id }}" class="btn btn-outline-success">Update</a>
+        <a href="/delete/{{ item.id }}" class="btn btn-outline-danger">Delete</a>
+        <button onclick="myFunction('{{ item.id }}')" class="btn btn-outline-success">Show Password</button>
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+  <!--  -->
+
+  <!-- Export button -->
+  <div class="text-center">
+    <a href="/export" class="btn btn-success">Export Password</a>
+  </div>
+  <!--  -->
+
+  <!-- Include a JavaScript file using the Flask 'url_for' function -->
+  <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+  <!-- Include Bootstrap JavaScript with Popper.js  -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
