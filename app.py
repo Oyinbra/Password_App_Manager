@@ -3,14 +3,28 @@ from flask import Flask, render_template, request, url_for, redirect, send_file
 from flask_sqlalchemy import SQLAlchemy
 import csv
 import time
+import os
+import secrets
+
+# import secrets
+
+# Load environment variables from the .env file
+from dotenv import load_dotenv
+
+load_dotenv()
+
 timestr = time.strftime("%Y%m%d-%H%M%S")
 
 # Create a Flask web application instance
 app = Flask(__name__)
 
+# Generate a secure secret key
+secret_key = secrets.token_hex(16)
+
 # Configure the SQLite database for the app
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
-app.config["SECRET_KEY"] = "this is secret"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+app.config["SECRET_KEY"] = secret_key
+
 
 # Create a SQLAlchemy database instance
 db = SQLAlchemy(app)
@@ -84,19 +98,25 @@ def delete_details(id):
         return redirect("/")
     except:
         return "There was a error deleting the details"
-    
+
+
 @app.route("/export")
 def export_data():
-    with open('dump.csv', 'w') as f:
+    with open("dump.csv", "w") as f:
         out = csv.writer(f)
-        out.writerow(['id', 'title', 'email', 'site_url', 'site_password'])
+        out.writerow(["id", "title", "email", "site_url", "site_password"])
         for item in PasswordManager.query.all():
-            out.writerow([item.id, item.title, item.email, item.site_url, item.site_password])
-    return send_file('dump.csv',
-        mimetype='text/csv',
+            out.writerow(
+                [item.id, item.title, item.email, item.site_url, item.site_password]
+            )
+    return send_file(
+        "dump.csv",
+        mimetype="text/csv",
         download_name=f"Export_Password_{timestr}.csv",
-        as_attachment=True)
+        as_attachment=True,
+    )
+
 
 # Run the Flask app
 if __name__ == "__main__":
-    app.run(debug=True, port=8000)  # Run the app in debug mode for development
+    app.run(debug=False)  # Run the app in debug mode for development
